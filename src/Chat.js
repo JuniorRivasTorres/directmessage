@@ -1,13 +1,14 @@
 import { IconButton } from "@material-ui/core";
 import { useSelector } from "react-redux"
 import MicNoneIcon from "@material-ui/icons/MicNone";
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./Chat.css"
 import { selectChatId, selectChatName } from "./features/chatSlice";
 import Message from "./Message";
 import db from "./firebase";
 import firebase from 'firebase';
 import { selectUser } from "./features/userSlice";
+import FlipMove from "react-flip-move";
 
 function Chat() {
     const user = useSelector(selectUser);
@@ -32,9 +33,11 @@ function Chat() {
                 );
             }
         }, [chatId]);
+
     const sendMessage = (e) => {
         e.preventDefault();
-        db.collection("chats").doc(chatId).collection("message").add({
+
+        db.collection("chats").doc(chatId).collection("messages").add({
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 message: input,
                 uid: user.uid,
@@ -53,9 +56,11 @@ function Chat() {
             </div>
 
             <div className="chat__messages">
-                {messages.map(({ id, data }) => (
-                    <Message key={id} content={data} />
+                <FlipMove>
+                    {messages.map(({ id, data }) => (
+                    <Message key={id} contents={data} /> 
                     ))}
+                </FlipMove>
             </div>
 
             <div className="chat__input">

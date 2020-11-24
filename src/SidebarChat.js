@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import './SidebarChat.css'
 import { Avatar } from "@material-ui/core"
 import { useDispatch } from "react-redux";
 import { setChat } from "./features/chatSlice";
-import { useEffect } from "React"
+
 import db from './firebase';
+import * as timeago from 'timeago.js';
 
 function SidebarChat({ id, chatName }) {
-    const dispatch = useDispatch();
-    const [chatInfo, setChatInfo]  = useState ([]);
+    const dispatch = useDispatch()
+    const [chatInfo, setChatInfo]  = useState([]);
+    
 
     useEffect(() => {
     db.collection("chats")
@@ -22,19 +24,21 @@ function SidebarChat({ id, chatName }) {
    
     return (
         <div 
-            onClick={() => dispatch(setChat({
+            onClick={() => {
+                dispatch(
+                    setChat({
                         chatId: id,
                         chatName: chatName,
                 })
             )
-        }
+        }}
          className="sidebarChat">
             <Avatar src={chatInfo[0]?.photo} />
             <div className="sidebarChat__info">
                  <h3>{chatName}</h3>
                 <p>{chatInfo[0]?.message}</p>
                     <small>
-                        {new Date(chatInfo[0]?.timestamp?.toDate()).toLocaleString()}</small>
+                        {timeago.format(new Date(chatInfo[0]?.timestamp?.toDate()))}</small>
             </div>
         </div>
     );
